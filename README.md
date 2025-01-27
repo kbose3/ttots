@@ -1,7 +1,7 @@
 # totts
 
 ## Tech Stack
-React Native + Node
+Expo + FireBase
 
 ### Setup
 1. Clone the Repository
