@@ -13,27 +13,36 @@ import {
   Keyboard,
 } from "react-native";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../services/firebaseConfig"; // Adjust the path to your Firebase config
+import { auth } from "../services/firebaseConfig";
 import { useRouter } from "expo-router";
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const router = useRouter(); // Initialize the router
+  const router = useRouter();
+
+  const isEduEmail = (email: string): boolean => {
+    return /^[^\s@]+@[^\s@]+\.(edu)$/i.test(email); // Regex for .edu email validation
+  };
 
   const handleLogin = async () => {
+    if (!isEduEmail(email)) {
+      Alert.alert("Invalid Email", "Please use a .edu email address.");
+      return;
+    }
+
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       Alert.alert("Login Successful", `Welcome, ${user.email}!`);
-      router.push("/home"); // Navigate to the Home Screen after login
+      router.push("/home");
     } catch (error: any) {
       Alert.alert("Login Failed", error.message);
     }
   };
 
   const handleRegister = () => {
-    router.push("/register"); // Navigate to the Register Screen
+    router.push("/register");
   };
 
   return (
