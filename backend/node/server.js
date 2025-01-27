@@ -1,17 +1,41 @@
 const express = require("express");
-const bodyParser = require("body-parser");
-const authRoutes = require("../routes/auth"); // Import the auth routes
+const admin = require("firebase-admin");
+const path = require("path");
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const port = 3000;
 
-// Middleware
-app.use(bodyParser.json());
+// Initialize Firebase Admin SDK
+const serviceAccount = require("../adminkey.json");
 
-// Routes
-app.use("/api/auth", authRoutes); // Add the auth routes
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://ttots-trashtotreasures-default-rtdb.firebaseio.com",
+});
 
-// Start the server
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+// Middleware to parse incoming JSON requests
+app.use(express.json());
+
+// Sample route
+app.get("/", (req, res) => {
+  res.send("Hello World");
+});
+
+// Sample Firebase route
+app.get("/firebase", (req, res) => {
+  admin
+    .database()
+    .ref("/some-data")
+    .once("value")
+    .then(snapshot => {
+      res.send(snapshot.val());
+    })
+    .catch(error => {
+      res.status(500).send("Error accessing Firebase: " + error);
+    });
+});
+
+// Start server
+app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
 });
