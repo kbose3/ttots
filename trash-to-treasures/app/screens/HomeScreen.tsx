@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Button, StyleSheet, Alert } from "react-native";
+import { View, Text, Button, StyleSheet, Alert, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
 import { auth } from "../services/firebaseConfig";
 import { onAuthStateChanged, signOut, User, sendEmailVerification } from "firebase/auth";
@@ -61,21 +61,59 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
+      <Text style={styles.logoText}>TTOS</Text> {}
       <Text style={styles.title}>Welcome, {user.email}!</Text>
-      <Button title="Logout" onPress={handleLogout} />
+      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+        <Text style={styles.logoutButtonText}>Logout</Text>
+      </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  // Light Yellow Background
   container: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "#FFF8DC", 
     padding: 20,
   },
+  // Sets up TTOS logo talk to Min about trash or treasure to match "tots"
+  // Yellowish Orange title
+  logoText: {
+    fontSize: 60, 
+    fontWeight: "bold",
+    color: "#F4A300", 
+    marginBottom: 20,
+    fontFamily: "Cochin", 
+  },
+  // Dark contrast added here
   title: {
     fontSize: 24,
+    fontWeight: "500",
+    color: "#333", 
     marginBottom: 20,
+  },
+  loadingText: {
+    fontSize: 18,
+    color: "#666",
+  },
+  // Black button
+  logoutButton: {
+    backgroundColor: "#333333",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+  },
+  // Color of text Logout button text yellow
+  logoutButtonText: {
+    color: "#F4A300",
+    fontWeight: "bold",
+    fontSize: 16,
   },
 });
