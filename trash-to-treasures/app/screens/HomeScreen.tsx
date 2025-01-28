@@ -61,7 +61,7 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.logoText}>TTOS</Text> {}
+      <Text style={styles.logoText}>TTOTS</Text> {}
       <Text style={styles.title}>Welcome, {user.email}!</Text>
       <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
         <Text style={styles.logoutButtonText}>Logout</Text>
