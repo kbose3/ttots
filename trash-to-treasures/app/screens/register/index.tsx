@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, Button, StyleSheet, Alert, TouchableOpacity } from "react-native";
 import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
-import { auth } from "../services/firebaseConfig";
+import { auth } from "../../services/firebaseConfig";
 import { useRouter } from "expo-router";
 
 export default function RegisterScreen() {
@@ -30,7 +30,7 @@ export default function RegisterScreen() {
         `A verification email has been sent to ${user.email}. Please verify your email before logging in.`
       );
 
-      router.push("/login"); // Navigate to LoginScreen
+      router.push("/screens/login"); // Navigate to LoginScreen
     } catch (error: any) {
       Alert.alert("Registration Failed", error.message);
     }
@@ -61,7 +61,7 @@ export default function RegisterScreen() {
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.backButton}
-        onPress={() => router.push("/login")}
+        onPress={() => router.push("/screens/login")}
       >
         <Text style={styles.backButtonText}>Back to Login</Text>
       </TouchableOpacity>

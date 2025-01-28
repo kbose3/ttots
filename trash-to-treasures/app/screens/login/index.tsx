@@ -10,7 +10,7 @@ import {
   Platform,
 } from "react-native";
 import { signInWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
-import { auth } from "../services/firebaseConfig";
+import { auth } from "../../services/firebaseConfig";
 import { useRouter } from "expo-router";
 
 export default function LoginScreen() {
@@ -64,14 +64,16 @@ export default function LoginScreen() {
 
       // Successful login
       Alert.alert("Login Successful", `Welcome, ${user.email}!`);
-      router.push("/home");
+
+      router.push("/screens/(tabs)");
+
     } catch (error: any) {
       Alert.alert("Login Failed", error.message);
     }
   };
 
   const handleRegister = () => {
-    router.push("/register");
+    router.push("/screens/register");
   };
 
   return (
