@@ -87,7 +87,7 @@ export default function LoginScreen() {
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <ScrollView contentContainerStyle={styles.container}>
-          <Text style={styles.logoText}>TTOS</Text>
+          <Text style={styles.logoText}>TTOTS</Text>
           <Text style={styles.title}>Login</Text>
           <TextInput
             style={styles.input}
