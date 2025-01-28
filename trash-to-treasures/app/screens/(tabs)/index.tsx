@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Button, StyleSheet, Alert, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, Alert, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
-import { auth } from "../services/firebaseConfig";
+import { auth } from "../../services/firebaseConfig";
 import { onAuthStateChanged, signOut, User, sendEmailVerification } from "firebase/auth";
 
-export default function HomeScreen() {
+export default function TabHomeScreen() {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (!currentUser) {
-        router.push("/login"); // Redirect to LoginScreen if not authenticated
+        router.replace("/screens/login"); // Redirect to Login if not authenticated
       } else if (!currentUser.emailVerified) {
         Alert.alert(
           "Email Not Verified",
@@ -45,7 +45,7 @@ export default function HomeScreen() {
   const handleLogout = async () => {
     try {
       await signOut(auth); // Log the user out
-      router.push("/login"); // Navigate to LoginScreen
+      router.replace("/screens/login"); // Navigate to Login
     } catch (error) {
       console.error("Logout failed:", error);
     }
@@ -54,7 +54,7 @@ export default function HomeScreen() {
   if (!user) {
     return (
       <View style={styles.container}>
-        <Text>Loading...</Text>
+        <Text style={styles.loadingText}>Loading...</Text>
       </View>
     );
   }
@@ -71,37 +71,32 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  // Light Yellow Background
   container: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#FFF8DC", 
+    backgroundColor: "#FFF8DC", // Light yellow background
     padding: 20,
   },
-  // Sets up TTOS logo talk to Min about trash or treasure to match "tots"
-  // Yellowish Orange title
   logoText: {
-    fontSize: 60, 
+    fontSize: 60,
     fontWeight: "bold",
-    color: "#F4A300", 
+    color: "#F4A300", // Yellowish orange
     marginBottom: 20,
-    fontFamily: "Cochin", 
+    fontFamily: "Cochin",
   },
-  // Dark contrast added here
   title: {
     fontSize: 24,
     fontWeight: "500",
-    color: "#333", 
+    color: "#333", // Dark contrast
     marginBottom: 20,
   },
   loadingText: {
     fontSize: 18,
     color: "#666",
   },
-  // Black button
   logoutButton: {
-    backgroundColor: "#333333",
+    backgroundColor: "#333333", // Dark button
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 10,
@@ -110,9 +105,8 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 3,
   },
-  // Color of text Logout button text yellow
   logoutButtonText: {
-    color: "#F4A300",
+    color: "#F4A300", // Yellowish orange text
     fontWeight: "bold",
     fontSize: 16,
   },
