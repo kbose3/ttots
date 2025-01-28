@@ -12,7 +12,7 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { auth } from "../services/firebaseConfig";
 import { useRouter } from "expo-router";
 
@@ -34,6 +34,40 @@ export default function LoginScreen() {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
+
+      // Check if the user's email is verified
+      if (!user.emailVerified) {
+        Alert.alert(
+          "Email Not Verified",
+          "Your email is not verified. Would you like to resend the verification email?",
+          [
+            {
+              text: "Yes",
+              onPress: async () => {
+                try {
+                  await sendEmailVerification(user);
+                  Alert.alert(
+                    "Verification Email Sent",
+                    `A verification email has been sent to ${user.email}. Please check your inbox.`
+                  );
+                } catch (error: any) {
+                  Alert.alert("Error", error.message);
+                }
+              },
+            },
+            {
+              text: "No",
+              onPress: () => {
+                // nothing happens just exits
+              },
+              style: "cancel", // This styles the "No" button as a cancel option
+            },
+          ]
+        );
+        return; // Prevent navigation to the Home Screen
+      }
+
+      // Successful login with a verified email
       Alert.alert("Login Successful", `Welcome, ${user.email}!`);
       router.push("/home");
     } catch (error: any) {

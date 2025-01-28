@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, Button, StyleSheet } from "react-native";
+import { View, Text, Button, StyleSheet, Alert } from "react-native";
 import { useRouter } from "expo-router";
-import { auth } from "../services/firebaseConfig"; // Correctly import auth from firebaseConfig
-import { onAuthStateChanged, signOut, User } from "firebase/auth"; // Import User type
+import { auth } from "../services/firebaseConfig";
+import { onAuthStateChanged, signOut, User, sendEmailVerification } from "firebase/auth";
 
 export default function HomeScreen() {
   const router = useRouter();
@@ -12,6 +12,28 @@ export default function HomeScreen() {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (!currentUser) {
         router.push("/login"); // Redirect to LoginScreen if not authenticated
+      } else if (!currentUser.emailVerified) {
+        Alert.alert(
+          "Email Not Verified",
+          "Please verify your email before accessing the app.",
+          [
+            {
+              text: "Resend Verification Email",
+              onPress: async () => {
+                try {
+                  await sendEmailVerification(currentUser);
+                  Alert.alert(
+                    "Verification Email Sent",
+                    `A verification email has been sent to ${currentUser.email}.`
+                  );
+                } catch (error: any) {
+                  Alert.alert("Error", error.message);
+                }
+              },
+            },
+            { text: "Logout", onPress: handleLogout },
+          ]
+        );
       } else {
         setUser(currentUser); // Set the current user
       }
