@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     marginTop: 20,
-    width: "100%",
+    width: "80%",
     paddingVertical: 12,
     backgroundColor: "#333333", // Dark background for the button
     borderRadius: 10,
@@ -113,6 +113,7 @@ const styles = StyleSheet.create({
   },
   backButton: {
     marginTop: 10,
+    width: "80%",
     paddingVertical: 12,
     paddingHorizontal: 20,
     backgroundColor: "#F4A300", // Yellowish orange for the back button

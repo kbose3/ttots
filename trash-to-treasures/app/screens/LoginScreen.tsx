@@ -3,15 +3,11 @@ import {
   View,
   Text,
   TextInput,
-  Button,
-  StyleSheet,
   Alert,
-  KeyboardAvoidingView,
-  Platform,
+  StyleSheet,
   ScrollView,
-  TouchableWithoutFeedback,
-  Keyboard,
   TouchableOpacity,
+  Platform,
 } from "react-native";
 import { signInWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { auth } from "../services/firebaseConfig";
@@ -58,17 +54,15 @@ export default function LoginScreen() {
             },
             {
               text: "No",
-              onPress: () => {
-                // nothing happens just exits
-              },
-              style: "cancel", // This styles the "No" button as a cancel option
+              onPress: () => {},
+              style: "cancel", // Cancel button style
             },
           ]
         );
         return; // Prevent navigation to the Home Screen
       }
 
-      // Successful login with a verified email
+      // Successful login
       Alert.alert("Login Successful", `Welcome, ${user.email}!`);
       router.push("/home");
     } catch (error: any) {
@@ -81,41 +75,33 @@ export default function LoginScreen() {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <ScrollView contentContainerStyle={styles.container}>
-          <Text style={styles.logoText}>TTOTS</Text>
-          <Text style={styles.title}>Login</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            placeholderTextColor="#666"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            placeholderTextColor="#666"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-          />
-          <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-            <Text style={styles.loginButtonText}>Login</Text>
-          </TouchableOpacity>
-          <Text style={styles.footerText}>Don’t have an account?</Text>
-          <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
-            <Text style={styles.registerButtonText}>Go to Register</Text>
-          </TouchableOpacity>
-        </ScrollView>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+    <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+      <Text style={styles.logoText}>TTOTS</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Email"
+        placeholderTextColor="#666"
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
+        autoCapitalize="none"
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Password"
+        placeholderTextColor="#666"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry
+      />
+      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+        <Text style={styles.loginButtonText}>Login</Text>
+      </TouchableOpacity>
+      <Text style={styles.footerText}>Don’t have an account?</Text>
+      <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
+        <Text style={styles.registerButtonText}>Go to Register</Text>
+      </TouchableOpacity>
+    </ScrollView>
   );
 }
 
@@ -132,7 +118,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#F4A300", // Yellowish orange
     marginBottom: 20,
-    fontFamily: "Cochin",
+    fontFamily: Platform.OS === "ios" ? "Cochin" : "serif",
   },
   title: {
     fontSize: 24,
@@ -160,12 +146,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 3,
     marginTop: 20,
+    width: "80%",
+    alignItems: "center",
   },
   loginButtonText: {
     color: "#F4A300", // Yellowish orange text
     fontWeight: "bold",
     fontSize: 16,
-    textAlign: "center",
   },
   footerText: {
     marginTop: 20,
@@ -178,11 +165,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     backgroundColor: "#F4A300", // Yellowish orange button
     borderRadius: 10,
+    width: "80%",
+    alignItems: "center",
   },
   registerButtonText: {
     color: "#FFF8DC", // Light yellow text
     fontWeight: "bold",
     fontSize: 16,
-    textAlign: "center",
   },
 });
