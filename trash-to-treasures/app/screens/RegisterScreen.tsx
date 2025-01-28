@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, Button, StyleSheet, Alert } from "react-native";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../services/firebaseConfig"; // Adjust the path to your Firebase config
+import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
+import { auth } from "../services/firebaseConfig";
 import { useRouter } from "expo-router";
 
 export default function RegisterScreen() {
@@ -9,12 +9,28 @@ export default function RegisterScreen() {
   const [password, setPassword] = useState("");
   const router = useRouter();
 
+  const isEduEmail = (email: string): boolean => {
+    return /^[^\s@]+@[^\s@]+\.(edu)$/i.test(email); // Regex for .edu email validation
+  };
+
   const handleRegister = async () => {
+    if (!isEduEmail(email)) {
+      Alert.alert("Invalid Email", "Please use a .edu email address.");
+      return;
+    }
+
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
-      Alert.alert("Registration Successful", `Welcome, ${user.email}!`);
-      router.push("/login"); // Navigate back to LoginScreen after successful registration
+
+      // Send email verification
+      await sendEmailVerification(user);
+      Alert.alert(
+        "Registration Successful",
+        `A verification email has been sent to ${user.email}. Please verify your email before logging in.`
+      );
+
+      router.push("/login"); // Navigate to LoginScreen
     } catch (error: any) {
       Alert.alert("Registration Failed", error.message);
     }

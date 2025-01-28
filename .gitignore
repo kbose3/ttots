@@ -6,4 +6,5 @@ node_modules/
 
 .env
 
+# .env route not working due to json formatting
 adminkey.json
