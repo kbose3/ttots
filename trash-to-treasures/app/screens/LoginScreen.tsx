@@ -3,14 +3,11 @@ import {
   View,
   Text,
   TextInput,
-  Button,
-  StyleSheet,
   Alert,
-  KeyboardAvoidingView,
-  Platform,
+  StyleSheet,
   ScrollView,
-  TouchableWithoutFeedback,
-  Keyboard,
+  TouchableOpacity,
+  Platform,
 } from "react-native";
 import { signInWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { auth } from "../services/firebaseConfig";
@@ -57,17 +54,15 @@ export default function LoginScreen() {
             },
             {
               text: "No",
-              onPress: () => {
-                // nothing happens just exits
-              },
-              style: "cancel", // This styles the "No" button as a cancel option
+              onPress: () => {},
+              style: "cancel", // Cancel button style
             },
           ]
         );
         return; // Prevent navigation to the Home Screen
       }
 
-      // Successful login with a verified email
+      // Successful login
       Alert.alert("Login Successful", `Welcome, ${user.email}!`);
       router.push("/home");
     } catch (error: any) {
@@ -80,38 +75,33 @@ export default function LoginScreen() {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <ScrollView contentContainerStyle={styles.container}>
-          <Text style={styles.title}>Login</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-          />
-          <View style={styles.buttonContainer}>
-            <Button title="Login" onPress={handleLogin} />
-          </View>
-          <Text style={styles.footerText}>Don’t have an account?</Text>
-          <View style={styles.registerButtonContainer}>
-            <Button title="Go to Register" onPress={handleRegister} />
-          </View>
-        </ScrollView>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+    <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+      <Text style={styles.logoText}>TTOTS</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Email"
+        placeholderTextColor="#666"
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
+        autoCapitalize="none"
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Password"
+        placeholderTextColor="#666"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry
+      />
+      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+        <Text style={styles.loginButtonText}>Login</Text>
+      </TouchableOpacity>
+      <Text style={styles.footerText}>Don’t have an account?</Text>
+      <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
+        <Text style={styles.registerButtonText}>Go to Register</Text>
+      </TouchableOpacity>
+    </ScrollView>
   );
 }
 
@@ -121,30 +111,66 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
+    backgroundColor: "#FFF8DC", // Light yellow background
+  },
+  logoText: {
+    fontSize: 60,
+    fontWeight: "bold",
+    color: "#F4A300", // Yellowish orange
+    marginBottom: 20,
+    fontFamily: Platform.OS === "ios" ? "Cochin" : "serif",
   },
   title: {
     fontSize: 24,
+    fontWeight: "500",
+    color: "#333", // Dark contrast
     marginBottom: 20,
   },
   input: {
     width: "100%",
-    padding: 10,
+    padding: 12,
     marginVertical: 10,
     borderWidth: 1,
     borderColor: "#ccc",
-    borderRadius: 5,
+    borderRadius: 10,
+    backgroundColor: "#fff",
+    color: "#333",
   },
-  buttonContainer: {
+  loginButton: {
+    backgroundColor: "#333333", // Dark button
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
     marginTop: 20,
-    width: "100%",
+    width: "80%",
+    alignItems: "center",
+  },
+  loginButtonText: {
+    color: "#F4A300", // Yellowish orange text
+    fontWeight: "bold",
+    fontSize: 16,
   },
   footerText: {
     marginTop: 20,
     fontSize: 16,
-    textAlign: "center",
+    color: "#333",
   },
-  registerButtonContainer: {
+  registerButton: {
     marginTop: 10,
-    width: "100%",
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    backgroundColor: "#F4A300", // Yellowish orange button
+    borderRadius: 10,
+    width: "80%",
+    alignItems: "center",
+  },
+  registerButtonText: {
+    color: "#FFF8DC", // Light yellow text
+    fontWeight: "bold",
+    fontSize: 16,
   },
 });
