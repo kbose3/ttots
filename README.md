@@ -10,9 +10,10 @@ Expo + FireBase
 4. You may press ```i``` for iOS emulator, ```w``` for web version, or use the Expo Go App and scan the QR code to run it on your device.
 
 ### Instructions and Notes
-1. Currently, alerts are setup but shows only on iOS. You can miss the alert to verify your email.
-2. After registration, you must go to your @*.edu email, and verify it with the link provided.
-3. Afterwise, you will be able to login.
+1. Currently, alerts are setup but shows only on mobile versions. You can miss the alert that instruct you when trying out the web version.
+2. You must use an @*.edu email to register.
+3. After registration, you must go to your @*.edu email, and verify it with the link provided.
+4. Afterwise, you will be able to login.
 
 
 ### Current Work (updated Jan 28)
