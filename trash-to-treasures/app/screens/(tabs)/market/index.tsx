@@ -200,6 +200,9 @@ const styles = StyleSheet.create({
   productImage: {
     width: '100%',
     height: 150,
+    borderTopLeftRadius: 10, 
+    borderTopRightRadius: 10, 
+    overflow: 'hidden',
   },
   productName: {
     fontSize: 16,
@@ -235,7 +238,7 @@ const styles = StyleSheet.create({
   modalImage: {
     width: '100%',
     height: 200,
-    borderRadius: 10,
+    borderRadius: 10, 
     marginBottom: 10,
     overflow: 'hidden',
   },
