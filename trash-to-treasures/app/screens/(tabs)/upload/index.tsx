@@ -112,7 +112,8 @@ export default function UploadScreen() {
         {image && (
           <>
             <Image source={{ uri: image }} style={styles.image} />
-            <TouchableOpacity style={styles.button} onPress={uploadImage}>
+
+            <TouchableOpacity style={styles.uploadButton} onPress={uploadImage}>
               <Text style={styles.buttonText}>Upload Product</Text>
             </TouchableOpacity>
           </>
@@ -153,5 +154,20 @@ const styles = StyleSheet.create({
   buttonText: { color: "#F4A300", // Yellowish orange text
     fontWeight: "bold",
     fontSize: 16, },
-  image: { width: '100%', height: 200, borderRadius: 10, marginBottom: 10 },
+  image: { padding: 10, width: '100%', height: 200, borderRadius: 10, marginBottom: 10 },
+  uploadButton: {
+    backgroundColor: "#333333", // Dark button
+    width: '100%',
+    paddingVertical: 20,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    alignItems: 'center',
+    position: 'absolute',
+    bottom: 20,
+    alignSelf: 'center',
+  }
 });

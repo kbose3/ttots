@@ -14,6 +14,8 @@ import {
 import { firestore, auth } from '../../../services/firebaseConfig';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { User, onAuthStateChanged } from 'firebase/auth';
+import { useFocusEffect } from '@react-navigation/native'; // Import useFocusEffect
+import { useCallback } from 'react';
 
 type Product = {
   id: string;
@@ -33,18 +35,27 @@ const MarketScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const fadeAnim = useState(new Animated.Value(0))[0]; // Initial opacity 0
 
+  // Set up user authentication and initial fetch
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       if (currentUser?.email) {
         const parsedSchool = extractSchoolFromEmail(currentUser.email);
         setSchool(parsedSchool);
-        fetchProducts(parsedSchool);
       }
     });
 
     return unsubscribe;
   }, []);
+
+  // Fetch products when the screen is focused
+  useFocusEffect(
+    useCallback(() => {
+      if (school) {
+        fetchProducts(school);
+      }
+    }, [school]) // Re-fetch products whenever the school changes
+  );
 
   // Extract school from user's email domain
   const extractSchoolFromEmail = (email: string): string => {
@@ -107,56 +118,56 @@ const MarketScreen = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-    <View style={styles.container}>
-      {/* School Header */}
-      {school && (
-        <View style={styles.schoolHeader}>
-          <Text style={styles.schoolText}>/{school}/market</Text>
-        </View>
-      )}
+      <View style={styles.container}>
+        {/* School Header */}
+        {school && (
+          <View style={styles.schoolHeader}>
+            <Text style={styles.schoolText}>/{school}/market</Text>
+          </View>
+        )}
 
-      {/* Loading Indicator */}
-      {loading ? (
-        <ActivityIndicator size="large" color="#5C6BC0" style={styles.loader} />
-      ) : (
-        <FlatList
-          data={products}
-          keyExtractor={(item) => item.id}
-          renderItem={renderProduct}
-          numColumns={2}
-          contentContainerStyle={styles.grid}
-        />
-      )}
+        {/* Loading Indicator */}
+        {loading ? (
+          <ActivityIndicator size="large" color="#5C6BC0" style={styles.loader} />
+        ) : (
+          <FlatList
+            data={products}
+            keyExtractor={(item) => item.id}
+            renderItem={renderProduct}
+            numColumns={2}
+            contentContainerStyle={styles.grid}
+          />
+        )}
 
-      {/* Floating Modal with Fade Animation */}
-      <Modal visible={modalVisible} transparent={true} onRequestClose={closeModal}>
-        <View style={styles.modalOverlay}>
-          <Animated.View style={[styles.modalContent, { opacity: fadeAnim }]}>
-            {selectedProduct && (
-              <>
-                <Image source={{ uri: selectedProduct.imageUrl }} style={styles.modalImage} />
-                <Text style={styles.modalName}>{selectedProduct.productName}</Text>
-                <Text style={styles.modalPrice}>${selectedProduct.price}</Text>
-                <Text style={styles.modalDescription}>{selectedProduct.description}</Text>
-                <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
-                  <Text style={styles.closeText}>Close</Text>
-                </TouchableOpacity>
-              </>
-            )}
-          </Animated.View>
-        </View>
-      </Modal>
-    </View>
+        {/* Floating Modal with Fade Animation */}
+        <Modal visible={modalVisible} transparent={true} onRequestClose={closeModal}>
+          <View style={styles.modalOverlay}>
+            <Animated.View style={[styles.modalContent, { opacity: fadeAnim }]}>
+              {selectedProduct && (
+                <>
+                  <Image source={{ uri: selectedProduct.imageUrl }} style={styles.modalImage} />
+                  <Text style={styles.modalName}>{selectedProduct.productName}</Text>
+                  <Text style={styles.modalPrice}>${selectedProduct.price}</Text>
+                  <Text style={styles.modalDescription}>{selectedProduct.description}</Text>
+                  <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
+                    <Text style={styles.closeText}>Close</Text>
+                  </TouchableOpacity>
+                </>
+              )}
+            </Animated.View>
+          </View>
+        </Modal>
+      </View>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-    safeArea: { flex: 1, backgroundColor: "#FFF8DC"},
+  safeArea: { flex: 1, backgroundColor: "#FFF8DC" },
   container: {
     flex: 1,
     padding: 10,
-    backgroundColor: "#FFF8DC", // Light yellow background
+    backgroundColor: "#FFF8DC",
   },
   schoolHeader: {
     padding: 15,
@@ -207,6 +218,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
+    overflow: 'hidden',
   },
   modalContent: {
     width: '90%',
@@ -214,13 +226,10 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 20,
     alignItems: 'center',
-    // Shadow styles for iOS
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 3,
-
-    // Elevation for Android
     elevation: 5,
   },
   modalImage: {
@@ -228,6 +237,7 @@ const styles = StyleSheet.create({
     height: 200,
     borderRadius: 10,
     marginBottom: 10,
+    overflow: 'hidden',
   },
   modalName: {
     fontSize: 24,
