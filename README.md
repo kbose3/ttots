@@ -5,9 +5,10 @@ Expo + FireBase
 
 ## Setup
 1. Clone the Repository
-2. Run the typical ```npm install```
-3. ```cd``` to trash-to-treasures, then ```npx expo start```
-4. You may press ```i``` for iOS emulator, ```w``` for web version, or use the Expo Go App and scan the QR code to run it on your device.
+2. ```cd``` to trash-to-treasures
+3. Run ```npm install``` to install node_modules
+4. Run ```npx expo start``` to start Expo
+5. You may press ```i``` for iOS emulator, ```w``` for web version, or use the Expo Go App and scan the QR code to run it on your device.
 
 ### Instructions and Notes
 1. Currently, alerts are setup but shows only on mobile versions. You can miss the alert that instruct you when trying out the web version.
