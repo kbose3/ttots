@@ -7,7 +7,6 @@ Expo + FireBase
 1. Clone the Repository
 2. Run the typical ```npm install```
 3. cd to trash-to-treasures, then ```npx expo start```
-4. For file uploads in dev, Google Cloud SDK is needed
 
 
 ### Current Work (updated Jan 27)
