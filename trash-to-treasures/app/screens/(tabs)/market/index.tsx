@@ -11,7 +11,7 @@ import {
   Animated,
   SafeAreaView,
 } from 'react-native';
-import { firestore, auth } from '../../../services/firebaseConfig';
+import { db, auth } from '../../../services/firebaseConfig';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { User, onAuthStateChanged } from 'firebase/auth';
 import { useFocusEffect } from '@react-navigation/native'; // Import useFocusEffect
@@ -69,7 +69,7 @@ const MarketScreen = () => {
   const fetchProducts = async (userSchool: string) => {
     setLoading(true);
     try {
-      const productsRef = collection(firestore, 'uploads');
+      const productsRef = collection(db, 'uploads');
       const q = query(productsRef, where('school', '==', userSchool));
       const querySnapshot = await getDocs(q);
 

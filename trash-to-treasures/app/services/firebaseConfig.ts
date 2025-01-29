@@ -25,7 +25,5 @@ export const auth: Auth = getAuth(app);
 export const db: Firestore = getFirestore(app);
 export const storage: FirebaseStorage = getStorage(app);
 
-export const firestore: Firestore = getFirestore(app);
-
 // Export the initialized app if needed elsewhere
 export default app;
