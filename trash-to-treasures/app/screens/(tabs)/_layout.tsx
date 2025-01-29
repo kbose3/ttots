@@ -7,7 +7,7 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: '#5C6BC0', // Active tab color
+        tabBarActiveTintColor: '#F4A300', // Active tab color
         tabBarInactiveTintColor: '#333', // Inactive tab color
         headerShown: false, // Disable headers
       }}
@@ -23,7 +23,7 @@ export default function TabLayout() {
 
       {/* Market Tab */}
       <Tabs.Screen
-        name="market"
+        name="market/index"
         options={{
           title: 'Market',
           tabBarIcon: ({ color }) => <FontAwesome name="shopping-cart" size={24} color={color} />,
@@ -32,7 +32,7 @@ export default function TabLayout() {
 
       {/* Upload Tab */}
       <Tabs.Screen
-        name="upload"
+        name="upload/index"
         options={{
           title: 'Upload',
           tabBarIcon: ({ color }) => <FontAwesome name="cloud-upload" size={24} color={color} />,
