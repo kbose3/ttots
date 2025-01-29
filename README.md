@@ -18,7 +18,7 @@ Expo + FireBase
 
 ### Current Work (updated Jan 28)
 1. the login with email/password with authentication/verification functionality is working with FireBase
-2. allows users to upload items, and see the items that were uploaded by @gatech.edu emails
+2. allows users to upload items, and see the items that were uploaded by users with the same @*.edu emails
 3. backend initial setup with firebase is done
 
 ### What's left for now after this assignment
