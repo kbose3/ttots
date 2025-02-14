@@ -78,7 +78,7 @@ export default function LoginScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
-      <Text style={styles.logoText}>TTOTS</Text>
+      <Text style={styles.logoText}>Trash to Treasures</Text>
       <TextInput
         style={styles.input}
         placeholder="Email"

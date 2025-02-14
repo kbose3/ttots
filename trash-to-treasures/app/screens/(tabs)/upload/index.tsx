@@ -76,7 +76,7 @@ export default function UploadScreen() {
       setProductName('');
       setPrice('');
       setDescription('');
-      Alert.alert('Success', 'Product uploaded successfully!');
+      Alert.alert('Success!', 'Product uploaded successfully!');
     } catch (error: any) {
       console.error('Error uploading image: ', error);
       Alert.alert('Upload failed!', error.message);
