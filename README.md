@@ -1,7 +1,7 @@
 # ttots
 
 ## Tech Stack
-Expo + FireBase
+React Native (Expo) + FireBase
 
 ## Setup
 1. Clone the Repository
@@ -22,5 +22,7 @@ Expo + FireBase
 2. allows users to upload items, and see the items that were uploaded by users with the same @*.edu emails
 3. backend initial setup with firebase is done
 
-### What's left for now after this assignment
+### For Sprint 3
 1. implment FireBase Admin services directly to the backend
+2. implement user roles for delivery
+3. implement payment methods (temporary)
