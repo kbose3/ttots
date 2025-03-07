@@ -133,7 +133,7 @@ const MarketScreen = () => {
     }
     const selectedDriver = sampleDrivers.find(driver => driver.id === selectedDriverId);
     router.push({
-      pathname: '/screens/complete_purchase',
+      pathname: '/screens/(tabs)/complete_purchase/index',
       params: {
         product: JSON.stringify(selectedProduct),
         driver: JSON.stringify(selectedDriver),
@@ -154,7 +154,7 @@ const MarketScreen = () => {
       <View style={styles.container}>
         {school && (
           <View style={styles.schoolHeader}>
-            <Text style={styles.schoolText}>/{school}/market</Text>
+            <Text style={styles.schoolText}>{school.toUpperCase() } MARKET</Text>
           </View>
         )}
         {loading ? (
