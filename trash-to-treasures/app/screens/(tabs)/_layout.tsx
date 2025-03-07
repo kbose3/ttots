@@ -47,6 +47,15 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <FontAwesome name="users" size={24} color={color} />,
         }}
       />
+
+      {/* Buy Tab */}
+            <Tabs.Screen
+        name="complete_purchase/index"
+        options={{
+          title: 'Buy',
+          tabBarIcon: ({ color }) => <FontAwesome name="money" size={24} color={color} />,
+        }}
+      />
     </Tabs>
   );
 }

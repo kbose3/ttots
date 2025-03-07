@@ -1,20 +1,22 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import {
-    View,
-    Text,
-    StyleSheet,
-    FlatList,
-    TouchableOpacity,
-    Image,
-    Modal,
-    ActivityIndicator,
-    Animated,
-    SafeAreaView,
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  Image,
+  Modal,
+  ActivityIndicator,
+  Animated,
+  SafeAreaView,
+  Alert,
 } from 'react-native';
 import { db, auth } from '../../../services/firebaseConfig';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { User, onAuthStateChanged } from 'firebase/auth';
 import { useFocusEffect } from '@react-navigation/native';
+import { useRouter } from 'expo-router';
 
 type Product = {
   id: string;
@@ -25,7 +27,6 @@ type Product = {
   school: string;
 };
 
-// New type for drivers
 type Driver = {
   id: string;
   name: string;
@@ -34,7 +35,7 @@ type Driver = {
   imageUrl: string;
 };
 
-// Sample drivers (from PurchaseScreen)
+// Sample drivers (the same sample from your Drivers tab)
 const sampleDrivers: Driver[] = [
   { id: '1', name: 'Karan Jana', vehicle: 'Chevrolet Traverse', rating: 4.5, imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGmt7mgLLJbU_An415Sur0-Iq8kRKQzzAwCw&s' },
   { id: '2', name: 'Robert Glenn', vehicle: 'Honda Civic', rating: 4.7, imageUrl: 'https://media.istockphoto.com/id/1286810719/photo/smiling-cheerful-young-adult-african-american-ethnicity-man-looking-at-camera-standing-at.jpg?s=612x612&w=0&k=20&c=b9sWYITIZ_yjXB3m-Xftj-latPXQDhb5Roa0pA0JaNY=' },
@@ -50,10 +51,9 @@ const MarketScreen = () => {
   const [loading, setLoading] = useState(true);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [selectedDriverId, setSelectedDriverId] = useState<string | null>(null);
   const fadeAnim = useState(new Animated.Value(0))[0]; // Initial opacity 0
-
-  // State for driver IDs that are selected (multi-select)
-  const [selectedDrivers, setSelectedDrivers] = useState<string[]>([]);
+  const router = useRouter();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -66,7 +66,6 @@ const MarketScreen = () => {
     return unsubscribe;
   }, []);
 
-  // Fetch products when the screen is focused
   useFocusEffect(
     useCallback(() => {
       if (school) {
@@ -75,7 +74,6 @@ const MarketScreen = () => {
     }, [school])
   );
 
-  // Extract school from user's email domain
   const extractSchoolFromEmail = (email: string): string => {
     const domain = email.split('@')[1];
     if (!domain) return 'Unknown School';
@@ -83,7 +81,6 @@ const MarketScreen = () => {
     return schoolName.toLowerCase();
   };
 
-  // Fetch products from Firestore where `school` matches the user's school
   const fetchProducts = async (userSchool: string) => {
     setLoading(true);
     try {
@@ -101,11 +98,9 @@ const MarketScreen = () => {
     setLoading(false);
   };
 
-  // Open modal with fade-in animation
-  const handleProductClick = (product: Product) => {
+  const openModal = (product: Product) => {
     setSelectedProduct(product);
-    // Reset any previous selection before showing modal
-    setSelectedDrivers([]);
+    setSelectedDriverId(null); // Clear any previous driver selection
     setModalVisible(true);
     Animated.timing(fadeAnim, {
       toValue: 1,
@@ -114,7 +109,6 @@ const MarketScreen = () => {
     }).start();
   };
 
-  // Close modal with fade-out animation
   const closeModal = () => {
     Animated.timing(fadeAnim, {
       toValue: 0,
@@ -126,18 +120,29 @@ const MarketScreen = () => {
     });
   };
 
-  // Toggle selection for a driver by its id
-  const toggleDriverSelection = (driverId: string) => {
-    setSelectedDrivers((prev) =>
-      prev.includes(driverId)
-        ? prev.filter((id) => id !== driverId)
-        : [...prev, driverId]
-    );
+  // Toggle driver selection (only single driver selection allowed)
+  const selectDriver = (driverId: string) => {
+    setSelectedDriverId(driverId);
   };
 
-  // Render each product in the grid
+  // Navigate to complete purchase screen, passing the selected product and driver
+  const completePurchase = () => {
+    if (!selectedProduct || !selectedDriverId) {
+      Alert.alert('Error', 'Please select both a product and a driver.');
+      return;
+    }
+    const selectedDriver = sampleDrivers.find(driver => driver.id === selectedDriverId);
+    router.push({
+      pathname: '/screens/complete_purchase',
+      params: {
+        product: JSON.stringify(selectedProduct),
+        driver: JSON.stringify(selectedDriver),
+      },
+    });
+  };
+
   const renderProduct = ({ item }: { item: Product }) => (
-    <TouchableOpacity style={styles.productContainer} onPress={() => handleProductClick(item)}>
+    <TouchableOpacity style={styles.productContainer} onPress={() => openModal(item)}>
       <Image source={{ uri: item.imageUrl }} style={styles.productImage} />
       <Text style={styles.productName}>{item.productName}</Text>
       <Text style={styles.productPrice}>${item.price}</Text>
@@ -147,14 +152,11 @@ const MarketScreen = () => {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        {/* School Header */}
         {school && (
           <View style={styles.schoolHeader}>
             <Text style={styles.schoolText}>/{school}/market</Text>
           </View>
         )}
-
-        {/* Loading Indicator */}
         {loading ? (
           <ActivityIndicator size="large" color="#5C6BC0" style={styles.loader} />
         ) : (
@@ -167,8 +169,7 @@ const MarketScreen = () => {
           />
         )}
 
-        {/* Floating Modal with Fade Animation */}
-        <Modal visible={modalVisible} transparent={true} onRequestClose={closeModal}>
+        <Modal visible={modalVisible} transparent onRequestClose={closeModal}>
           <View style={styles.modalOverlay}>
             <Animated.View style={[styles.modalContent, { opacity: fadeAnim }]}>
               {selectedProduct && (
@@ -178,25 +179,30 @@ const MarketScreen = () => {
                   <Text style={styles.modalPrice}>${selectedProduct.price}</Text>
                   <Text style={styles.modalDescription}>{selectedProduct.description}</Text>
 
-                  {/* Multi-select field for available drivers */}
-                  <Text style={styles.sectionTitle}>Select Available Drivers</Text>
+                  <Text style={styles.sectionTitle}>Select a Driver</Text>
                   <FlatList
                     data={sampleDrivers}
                     horizontal
                     keyExtractor={(item) => item.id}
                     renderItem={({ item }) => (
                       <TouchableOpacity
-                        onPress={() => toggleDriverSelection(item.id)}
                         style={[
                           styles.driverOption,
-                          selectedDrivers.includes(item.id) && styles.driverOptionSelected,
+                          selectedDriverId === item.id && styles.driverOptionSelected,
                         ]}
+                        onPress={() => selectDriver(item.id)}
                       >
                         <Image source={{ uri: item.imageUrl }} style={styles.driverOptionImage} />
                         <Text style={styles.driverOptionName}>{item.name}</Text>
                       </TouchableOpacity>
                     )}
                   />
+
+                  {selectedDriverId && (
+                    <TouchableOpacity style={styles.completePurchaseButton} onPress={completePurchase}>
+                      <Text style={styles.completePurchaseText}>Complete Purchase</Text>
+                    </TouchableOpacity>
+                  )}
 
                   <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
                     <Text style={styles.closeText}>Close</Text>
@@ -214,12 +220,12 @@ const MarketScreen = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#FFF8DC",
+    backgroundColor: '#FFF8DC',
   },
   container: {
     flex: 1,
     padding: 10,
-    backgroundColor: "#FFF8DC",
+    backgroundColor: '#FFF8DC',
   },
   schoolHeader: {
     padding: 15,
@@ -281,7 +287,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 20,
     alignItems: 'center',
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 3,
@@ -292,7 +298,6 @@ const styles = StyleSheet.create({
     height: 200,
     borderRadius: 10,
     marginBottom: 10,
-    overflow: 'hidden',
   },
   modalName: {
     fontSize: 24,
@@ -337,8 +342,20 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textAlign: 'center',
   },
+  completePurchaseButton: {
+    marginTop: 15,
+    backgroundColor: '#5C6BC0',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+  },
+  completePurchaseText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
   closeButton: {
-    marginTop: 20,
+    marginTop: 15,
     backgroundColor: '#FF3B30',
     paddingVertical: 10,
     paddingHorizontal: 20,
