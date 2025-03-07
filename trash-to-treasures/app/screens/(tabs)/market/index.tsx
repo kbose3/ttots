@@ -1,21 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-  Image,
-  Modal,
-  ActivityIndicator,
-  Animated,
-  SafeAreaView,
+    View,
+    Text,
+    StyleSheet,
+    FlatList,
+    TouchableOpacity,
+    Image,
+    Modal,
+    ActivityIndicator,
+    Animated,
+    SafeAreaView,
 } from 'react-native';
 import { db, auth } from '../../../services/firebaseConfig';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { User, onAuthStateChanged } from 'firebase/auth';
-import { useFocusEffect } from '@react-navigation/native'; // Import useFocusEffect
-import { useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 
 type Product = {
   id: string;
@@ -26,6 +25,24 @@ type Product = {
   school: string;
 };
 
+// New type for drivers
+type Driver = {
+  id: string;
+  name: string;
+  vehicle: string;
+  rating: number;
+  imageUrl: string;
+};
+
+// Sample drivers (from PurchaseScreen)
+const sampleDrivers: Driver[] = [
+  { id: '1', name: 'Karan Jana', vehicle: 'Chevrolet Traverse', rating: 4.5, imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGmt7mgLLJbU_An415Sur0-Iq8kRKQzzAwCw&s' },
+  { id: '2', name: 'Robert Glenn', vehicle: 'Honda Civic', rating: 4.7, imageUrl: 'https://media.istockphoto.com/id/1286810719/photo/smiling-cheerful-young-adult-african-american-ethnicity-man-looking-at-camera-standing-at.jpg?s=612x612&w=0&k=20&c=b9sWYITIZ_yjXB3m-Xftj-latPXQDhb5Roa0pA0JaNY=' },
+  { id: '3', name: 'Carol Davis', vehicle: 'Ford F-150', rating: 4.6, imageUrl: 'https://st3.depositphotos.com/1011434/13157/i/450/depositphotos_131572502-stock-photo-happy-woman-smiling.jpg' },
+  { id: '4', name: 'David Wilson', vehicle: 'Honda Odyssey', rating: 4.4, imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSp0tML1B408lzjK930FekwqGoTC15FeCUpMA&s' },
+  { id: '5', name: 'Eve Brown', vehicle: 'Nissan Altima', rating: 4.8, imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQhWAL59Q57_XMIiD1vyU0gzfU2qJOkpxH5Ww&s' },
+];
+
 const MarketScreen = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [user, setUser] = useState<User | null>(null);
@@ -35,7 +52,9 @@ const MarketScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const fadeAnim = useState(new Animated.Value(0))[0]; // Initial opacity 0
 
-  // Set up user authentication and initial fetch
+  // State for driver IDs that are selected (multi-select)
+  const [selectedDrivers, setSelectedDrivers] = useState<string[]>([]);
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
@@ -44,7 +63,6 @@ const MarketScreen = () => {
         setSchool(parsedSchool);
       }
     });
-
     return unsubscribe;
   }, []);
 
@@ -54,15 +72,15 @@ const MarketScreen = () => {
       if (school) {
         fetchProducts(school);
       }
-    }, [school]) // Re-fetch products whenever the school changes
+    }, [school])
   );
 
   // Extract school from user's email domain
   const extractSchoolFromEmail = (email: string): string => {
-    const domain = email.split('@')[1]; // Extract domain (e.g., "gatech.edu")
+    const domain = email.split('@')[1];
     if (!domain) return 'Unknown School';
-    const schoolName = domain.split('.')[0]; // Extract first part of domain (e.g., "gatech")
-    return schoolName.toLowerCase(); // Convert to lowercase for consistency
+    const schoolName = domain.split('.')[0];
+    return schoolName.toLowerCase();
   };
 
   // Fetch products from Firestore where `school` matches the user's school
@@ -72,12 +90,10 @@ const MarketScreen = () => {
       const productsRef = collection(db, 'uploads');
       const q = query(productsRef, where('school', '==', userSchool));
       const querySnapshot = await getDocs(q);
-
       const productsData: Product[] = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       })) as Product[];
-
       setProducts(productsData);
     } catch (error) {
       console.error('Error fetching products:', error);
@@ -88,9 +104,11 @@ const MarketScreen = () => {
   // Open modal with fade-in animation
   const handleProductClick = (product: Product) => {
     setSelectedProduct(product);
+    // Reset any previous selection before showing modal
+    setSelectedDrivers([]);
     setModalVisible(true);
     Animated.timing(fadeAnim, {
-      toValue: 1, // Fully visible
+      toValue: 1,
       duration: 300,
       useNativeDriver: true,
     }).start();
@@ -99,7 +117,7 @@ const MarketScreen = () => {
   // Close modal with fade-out animation
   const closeModal = () => {
     Animated.timing(fadeAnim, {
-      toValue: 0, // Fully invisible
+      toValue: 0,
       duration: 200,
       useNativeDriver: true,
     }).start(() => {
@@ -108,6 +126,16 @@ const MarketScreen = () => {
     });
   };
 
+  // Toggle selection for a driver by its id
+  const toggleDriverSelection = (driverId: string) => {
+    setSelectedDrivers((prev) =>
+      prev.includes(driverId)
+        ? prev.filter((id) => id !== driverId)
+        : [...prev, driverId]
+    );
+  };
+
+  // Render each product in the grid
   const renderProduct = ({ item }: { item: Product }) => (
     <TouchableOpacity style={styles.productContainer} onPress={() => handleProductClick(item)}>
       <Image source={{ uri: item.imageUrl }} style={styles.productImage} />
@@ -149,6 +177,27 @@ const MarketScreen = () => {
                   <Text style={styles.modalName}>{selectedProduct.productName}</Text>
                   <Text style={styles.modalPrice}>${selectedProduct.price}</Text>
                   <Text style={styles.modalDescription}>{selectedProduct.description}</Text>
+
+                  {/* Multi-select field for available drivers */}
+                  <Text style={styles.sectionTitle}>Select Available Drivers</Text>
+                  <FlatList
+                    data={sampleDrivers}
+                    horizontal
+                    keyExtractor={(item) => item.id}
+                    renderItem={({ item }) => (
+                      <TouchableOpacity
+                        onPress={() => toggleDriverSelection(item.id)}
+                        style={[
+                          styles.driverOption,
+                          selectedDrivers.includes(item.id) && styles.driverOptionSelected,
+                        ]}
+                      >
+                        <Image source={{ uri: item.imageUrl }} style={styles.driverOptionImage} />
+                        <Text style={styles.driverOptionName}>{item.name}</Text>
+                      </TouchableOpacity>
+                    )}
+                  />
+
                   <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
                     <Text style={styles.closeText}>Close</Text>
                   </TouchableOpacity>
@@ -163,7 +212,10 @@ const MarketScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1, backgroundColor: "#FFF8DC" },
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#FFF8DC",
+  },
   container: {
     flex: 1,
     padding: 10,
@@ -200,8 +252,8 @@ const styles = StyleSheet.create({
   productImage: {
     width: '100%',
     height: 150,
-    borderTopLeftRadius: 10, 
-    borderTopRightRadius: 10, 
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
     overflow: 'hidden',
   },
   productName: {
@@ -238,7 +290,7 @@ const styles = StyleSheet.create({
   modalImage: {
     width: '100%',
     height: 200,
-    borderRadius: 10, 
+    borderRadius: 10,
     marginBottom: 10,
     overflow: 'hidden',
   },
@@ -257,6 +309,33 @@ const styles = StyleSheet.create({
     color: '#333',
     textAlign: 'center',
     marginBottom: 10,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginVertical: 10,
+  },
+  driverOption: {
+    marginHorizontal: 5,
+    padding: 5,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+  },
+  driverOptionSelected: {
+    borderColor: '#5C6BC0',
+    backgroundColor: '#E0EAFB',
+  },
+  driverOptionImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginBottom: 5,
+  },
+  driverOptionName: {
+    fontSize: 12,
+    textAlign: 'center',
   },
   closeButton: {
     marginTop: 20,

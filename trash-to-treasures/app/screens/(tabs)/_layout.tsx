@@ -38,6 +38,15 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <FontAwesome name="cloud-upload" size={24} color={color} />,
         }}
       />
+
+      {/* Drivers Tab */}
+      <Tabs.Screen
+        name="drivers/index"
+        options={{
+          title: 'Drivers',
+          tabBarIcon: ({ color }) => <FontAwesome name="users" size={24} color={color} />,
+        }}
+      />
     </Tabs>
   );
 }

@@ -1,6 +1,6 @@
 import { StyleSheet, Image, Alert, TouchableOpacity, SafeAreaView, Text, View, TextInput } from 'react-native';
 import React, { useState, useEffect } from 'react';
-import { storage, firestore, auth } from '../../../services/firebaseConfig';
+import { storage, db, auth } from '../../../services/firebaseConfig';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { addDoc, collection } from 'firebase/firestore';
 import * as ImagePicker from 'expo-image-picker';
@@ -60,7 +60,7 @@ export default function UploadScreen() {
       const school = extractSchoolFromEmail(user.email || 'unknown@example.com');
 
       // Save metadata to Firestore
-      await addDoc(collection(firestore, 'uploads'), {
+      await addDoc(collection(db, 'uploads'), {
         userId: user.uid,
         email: user.email,
         school,
