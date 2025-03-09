@@ -56,10 +56,8 @@ export default function UploadScreen() {
 
       const imageUrl = await getDownloadURL(storageRef);
 
-      // Extract school from email
       const school = extractSchoolFromEmail(user.email || 'unknown@example.com');
 
-      // Save metadata to Firestore
       await addDoc(collection(db, 'uploads'), {
         userId: user.uid,
         email: user.email,
@@ -71,8 +69,7 @@ export default function UploadScreen() {
         createdAt: new Date(),
       });
 
-      // Reset fields and image placeholder
-      setImage(null); // Clear image preview
+      setImage(null); 
       setProductName('');
       setPrice('');
       setDescription('');
@@ -128,7 +125,7 @@ const styles = StyleSheet.create({
   container: { 
     flex: 1,
     padding: 10,
-    backgroundColor: "#FFF8DC", // Light yellow background
+    backgroundColor: "#FFF8DC",
   },
   title: { fontSize: 24, fontWeight: 'bold', marginBottom: 20 },
   input: {
@@ -141,7 +138,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   button: {
-    backgroundColor: "#333333", // Dark button
+    backgroundColor: "#333333",
     paddingVertical: 20,
     paddingHorizontal: 20,
     borderRadius: 10,
@@ -151,12 +148,12 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     alignItems: 'center',
   },
-  buttonText: { color: "#F4A300", // Yellowish orange text
+  buttonText: { color: "#F4A300",
     fontWeight: "bold",
     fontSize: 16, },
   image: { padding: 10, width: '100%', height: 200, borderRadius: 10, marginBottom: 10 },
   uploadButton: {
-    backgroundColor: "#333333", // Dark button
+    backgroundColor: "#333333",
     width: '100%',
     paddingVertical: 20,
     paddingHorizontal: 20,

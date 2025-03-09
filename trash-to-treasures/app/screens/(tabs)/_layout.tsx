@@ -7,14 +7,14 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: '#F4A300', // Active tab color
-        tabBarInactiveTintColor: '#333', // Inactive tab color
-        headerShown: false, // Disable headers
+        tabBarActiveTintColor: '#F4A300', 
+        tabBarInactiveTintColor: '#333', 
+        headerShown: false, 
       }}
     >
       {/* Sign Out Tab */}
       <Tabs.Screen
-        name="index" // Maps to (tabs)/index.tsx
+        name="index" 
         options={{
           title: 'Sign Out',
           tabBarIcon: ({ color }) => <FontAwesome name="sign-out" size={24} color={color} />,
@@ -25,7 +25,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="market/index"
         options={{
-          title: 'Market',
+          title: 'Marketplace',
           tabBarIcon: ({ color }) => <FontAwesome name="shopping-cart" size={24} color={color} />,
         }}
       />

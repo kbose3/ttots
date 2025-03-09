@@ -22,7 +22,6 @@ export default function PurchaseScreen() {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    // Set sample drivers immediately
     setDrivers(sampleDrivers);
     setLoading(false);
   }, []);

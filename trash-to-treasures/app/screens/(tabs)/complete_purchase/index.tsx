@@ -15,12 +15,9 @@ import { deleteDoc, doc } from 'firebase/firestore';
 import { db } from '../../../services/firebaseConfig';
 
 export default function CompletePurchaseScreen() {
-  // Retrieve search parameters passed from MarketScreen.
-  // Expecting "product" and "driver" as JSON strings.
   const { product, driver } = useLocalSearchParams();
   const router = useRouter();
 
-  // Parse the product and driver parameters
   let parsedProduct, parsedDriver;
   try {
     parsedProduct = product ? JSON.parse(product as string) : null;
@@ -47,7 +44,6 @@ export default function CompletePurchaseScreen() {
     }
 
     try {
-      // Delete the purchased product from Firestore so that it is not re-fetched in MarketScreen.
       await deleteDoc(doc(db, 'uploads', parsedProduct.id));
       Alert.alert('Purchase Confirmed', 'Your purchase has been completed successfully!');
       router.push({ pathname: '/screens/(tabs)/market' });
@@ -57,7 +53,6 @@ export default function CompletePurchaseScreen() {
     }
   };
 
-  // If no product was passed, display a message prompting user to select one.
   if (!parsedProduct) {
     return (
       <SafeAreaView style={styles.container}>

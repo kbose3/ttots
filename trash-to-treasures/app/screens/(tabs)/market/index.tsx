@@ -35,7 +35,6 @@ type Driver = {
   imageUrl: string;
 };
 
-// Sample drivers (the same sample from your Drivers tab)
 const sampleDrivers: Driver[] = [
   { id: '1', name: 'Karan Jana', vehicle: 'Chevrolet Traverse', rating: 4.5, imageUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTGmt7mgLLJbU_An415Sur0-Iq8kRKQzzAwCw&s' },
   { id: '2', name: 'Robert Glenn', vehicle: 'Honda Civic', rating: 4.7, imageUrl: 'https://media.istockphoto.com/id/1286810719/photo/smiling-cheerful-young-adult-african-american-ethnicity-man-looking-at-camera-standing-at.jpg?s=612x612&w=0&k=20&c=b9sWYITIZ_yjXB3m-Xftj-latPXQDhb5Roa0pA0JaNY=' },
@@ -52,7 +51,7 @@ const MarketScreen = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedDriverId, setSelectedDriverId] = useState<string | null>(null);
-  const fadeAnim = useState(new Animated.Value(0))[0]; // Initial opacity 0
+  const fadeAnim = useState(new Animated.Value(0))[0];  
   const router = useRouter();
 
   useEffect(() => {
@@ -100,7 +99,7 @@ const MarketScreen = () => {
 
   const openModal = (product: Product) => {
     setSelectedProduct(product);
-    setSelectedDriverId(null); // Clear any previous driver selection
+    setSelectedDriverId(null);  
     setModalVisible(true);
     Animated.timing(fadeAnim, {
       toValue: 1,
@@ -120,12 +119,10 @@ const MarketScreen = () => {
     });
   };
 
-  // Toggle driver selection (only single driver selection allowed)
   const selectDriver = (driverId: string) => {
     setSelectedDriverId(driverId);
   };
 
-  // Navigate to complete purchase screen, passing the selected product and driver
   const completePurchase = () => {
     if (!selectedProduct || !selectedDriverId) {
       Alert.alert('Error', 'Please select both a product and a driver.');
