@@ -130,7 +130,7 @@ const MarketScreen = () => {
     }
     const selectedDriver = sampleDrivers.find(driver => driver.id === selectedDriverId);
     router.push({
-      pathname: '/screens/(tabs)/complete_purchase/index',
+      pathname: '/screens/(tabs)/complete_purchase',
       params: {
         product: JSON.stringify(selectedProduct),
         driver: JSON.stringify(selectedDriver),
