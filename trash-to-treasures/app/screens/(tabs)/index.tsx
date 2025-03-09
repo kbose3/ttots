@@ -11,7 +11,7 @@ export default function TabHomeScreen() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       if (!currentUser) {
-        router.replace("/screens/login"); // Redirect to Login if not authenticated
+        router.replace("/screens/login"); 
       } else if (!currentUser.emailVerified) {
         Alert.alert(
           "Email Not Verified",
@@ -35,17 +35,17 @@ export default function TabHomeScreen() {
           ]
         );
       } else {
-        setUser(currentUser); // Set the current user
+        setUser(currentUser); 
       }
     });
 
-    return unsubscribe; // Cleanup the subscription
+    return unsubscribe; 
   }, [router]);
 
   const handleLogout = async () => {
     try {
-      await signOut(auth); // Log the user out
-      router.replace("/screens/login"); // Navigate to Login
+      await signOut(auth); 
+      router.replace("/screens/login"); 
     } catch (error) {
       console.error("Logout failed:", error);
     }
@@ -75,20 +75,20 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#FFF8DC", // Light yellow background
+    backgroundColor: "#FFF8DC", 
     padding: 20,
   },
   logoText: {
     fontSize: 60,
     fontWeight: "bold",
-    color: "#F4A300", // Yellowish orange
+    color: "#F4A300", 
     marginBottom: 20,
     fontFamily: "Cochin",
   },
   title: {
     fontSize: 24,
     fontWeight: "500",
-    color: "#333", // Dark contrast
+    color: "#333", 
     marginBottom: 20,
   },
   loadingText: {
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     color: "#666",
   },
   logoutButton: {
-    backgroundColor: "#333333", // Dark button
+    backgroundColor: "#333333",
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 10,
@@ -106,7 +106,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
   },
   logoutButtonText: {
-    color: "#F4A300", // Yellowish orange text
+    color: "#F4A300", 
     fontWeight: "bold",
     fontSize: 16,
   },
